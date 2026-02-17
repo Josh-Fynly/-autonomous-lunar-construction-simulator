@@ -30,7 +30,11 @@ The simulator consists of five subsystems:
 5. Visualization — real-time rendering
 
 ## Project Structure
-alcs/ core/            # simulation orchestration physics/         # environment and dynamics agents/          # robot models visualization/   # rendering tools experiments/     # test scenarios
+alcs/ core/            # simulation orchestration 
+physics/               # environment and dynamics 
+agents/                # robot models 
+visualization/         # rendering tools 
+experiments/           # test scenarios
 
 ## Sprint 1 Goal
 
