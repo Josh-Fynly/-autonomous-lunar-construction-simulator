@@ -2,22 +2,20 @@ import numpy as np
 
 
 class Terrain:
-    def __init__(self, width=100, scale=1.0):
+    def __init__(self, width=200, scale=1.0):
         self.width = width
         self.scale = scale
         self.heights = self.generate_heightmap()
 
     def generate_heightmap(self):
-        x = np.linspace(0, 10, self.width)
+        x = np.linspace(0, 20, self.width)
 
-        # Smooth structured terrain (not random)
         heights = (
-            2 * np.sin(x) +
-            1.5 * np.sin(0.5 * x) +
-            0.5 * np.sin(2 * x)
+            2.5 * np.sin(x * 0.6) +
+            1.2 * np.sin(x * 1.3) +
+            0.6 * np.sin(x * 2.7)
         )
 
-        # Normalize so minimum is 0
         heights = heights - np.min(heights)
 
         return heights * self.scale
