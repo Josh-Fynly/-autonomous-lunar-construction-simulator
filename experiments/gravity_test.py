@@ -30,7 +30,7 @@ plt.plot(terrain_x, terrain_y, label="Terrain")
 # Plot trajectory
 plt.plot(positions[:, 0], positions[:, 1], label="Trajectory")
 
-plt.title("Lunar Terrain + Physics Simulation")
+plt.title("Slope-Aware Lunar Physics Simulation")
 plt.xlabel("X position")
 plt.ylabel("Y position")
 plt.legend()
