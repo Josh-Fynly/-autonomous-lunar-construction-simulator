@@ -1,41 +1,65 @@
 import numpy as np
 
-# Lunar gravity (m/s^2)
 LUNAR_GRAVITY = 1.62
 
 
 class LunarPhysicsEngine:
     def __init__(self, terrain, dt=0.1):
         self.dt = dt
-        self.terrain = terrain  # terrain dependency
+        self.terrain = terrain
+
+    def get_slope(self, x, dx=1.0):
+        """
+        Approximate terrain slope using finite difference.
+        """
+        h1 = self.terrain.get_height(x - dx)
+        h2 = self.terrain.get_height(x + dx)
+
+        return (h2 - h1) / (2 * dx)
 
     def step(self, position, velocity):
         """
-        Advance physics by one time step.
-
-        position: np.array([x, y])
-        velocity: np.array([vx, vy])
-
-        Returns updated (position, velocity)
+        Physics step with slope-aware motion.
         """
 
-        # Gravity acts downward in y-direction
+        x, y = position
+
+        # Gravity
         gravity = np.array([0, -LUNAR_GRAVITY])
 
-        # Update velocity
+        # Update velocity (gravity)
         velocity = velocity + gravity * self.dt
 
-        # Simple horizontal damping (simulated friction)
-        velocity[0] *= 0.99
+        # Horizontal damping (minimal surface resistance)
+        velocity[0] *= 0.995
 
-        # Update position
-        position = position + velocity * self.dt
+        # Terrain height
+        ground_height = self.terrain.get_height(x)
 
-        # Terrain collision
-        ground_height = self.terrain.get_height(position[0])
+        # Slope at position
+        slope = self.get_slope(x)
 
-        if position[1] < ground_height:
-            position[1] = ground_height
-            velocity[1] *= -0.2  # small bounce with energy loss
+        # If on ground or below ground
+        if y <= ground_height:
 
-        return position, velocity
+            # Project gravity along slope (simplified physics)
+            slope_force = slope * LUNAR_GRAVITY
+
+            velocity[0] += slope_force * self.dt
+
+            # Energy loss on contact
+            velocity[1] *= -0.15
+
+            # Strong ground friction (prevents infinite sliding)
+            velocity[0] *= 0.90
+
+            # Lock to surface
+            y = ground_height
+
+        else:
+            # In air
+            y = y + velocity[1] * self.dt
+
+        x = x + velocity[0] * self.dt
+
+        return np.array([x, y]), velocity
